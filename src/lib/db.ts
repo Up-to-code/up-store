@@ -1,26 +1,22 @@
-import mongoose from "mongoose";
-const db = async () => {
+import mongoose from 'mongoose';
+
+const connectToDatabase = async () => {
   if (mongoose.connection.readyState === 1) {
-    console.log("db already connected");
+    // Connection already established
     return mongoose.connection;
-  } else {
-    try {
-      const conn = mongoose
-        .connect(process.env.NEXT_PUBLIC_MONGODB_URI as string, {
-          serverSelectionTimeoutMS: 30000, // 30 seconds
-        })
-        .then(() => {
-          console.log("MongoDB connected");
-        })
-        .catch((err) => {
-          console.error("MongoDB connection error:", err);
-        });
-      console.log("db connected");
-      return conn;
-    } catch (err) {
-      console.log(err);
-    }
+  }
+
+  try {
+    // Connect to MongoDB
+    await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI as string, {
+      serverSelectionTimeoutMS: 30000, // 30 seconds
+    });
+    console.log('MongoDB connected');
+    return mongoose.connection;
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw new Error('Failed to connect to MongoDB');
   }
 };
 
-export default db;
+export default connectToDatabase;
